@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Virtual Piano
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive virtual grand piano you can play with your mouse or computer
+keyboard. Built with React, TypeScript, and Vite, with high-quality grand
+piano sound that works **offline**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🎹 **Playable keyboard** spanning C3–A#5 (20 white + 15 black keys), played
+  with the mouse or the computer keyboard.
+- 🔊 **Real grand piano sound, offline** — Salamander Grand Piano samples are
+  bundled locally and played through [Tone.js](https://tonejs.github.io/)'s
+  `Sampler`, which pitch-shifts between samples. No network needed at runtime.
+- ✨ **Visual feedback** — each key shows its keyboard letter and note name and
+  highlights while pressed.
+- 🎚️ **Toggleable sustain pedal** — when on, notes keep ringing after the key
+  is released.
+- 🎛️ **Instrument-ready architecture** — sound sits behind an instrument
+  registry, so new instruments are just a sample set plus one config entry.
 
-## React Compiler
+## Keyboard mapping
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The two letter rows are the white keys; the rows physically above them are the
+black keys, mirroring a real piano.
 
-## Expanding the ESLint configuration
+| Computer keys | Notes |
+| --- | --- |
+| Top letter row `Q W E R T Y U I O P` | White keys C3–E4 (lower octave) |
+| Number row `2 3 5 6 7 9 0` | Black keys C#3–D#4 |
+| Bottom letter row `Z X C V B N M , . /` | White keys F4–A5 (upper octave) |
+| Home row `S D F H J L ;` and `'` | Black keys F#4–A#5 |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Audio unlocks on your first interaction (a browser requirement), so the first
+click or key press is what starts the sound.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # start the dev server (http://localhost:5173)
+npm run build    # type-check and build for production
+npm run preview  # preview the production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Project structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+  audio/
+    instruments.ts    # instrument registry + config types
+    useInstrument.ts  # builds a Tone.Sampler and exposes play/stop
+  piano/
+    keyMap.ts         # keyboard -> note mapping and the on-screen key layout
+    Piano.tsx         # keyboard rendering, input handling, sustain logic
+    PianoKey.tsx      # a single white or black key
+    piano.css         # keyboard styles
+  App.tsx             # header, instrument selector, sustain toggle
+public/
+  samples/piano/      # bundled Salamander grand piano samples (offline)
+```
+
+## Adding another instrument
+
+1. Drop its samples under `public/samples/<id>/`.
+2. Add an entry to the `INSTRUMENTS` array in `src/audio/instruments.ts`.
+
+It will then appear in the instrument selector automatically.
