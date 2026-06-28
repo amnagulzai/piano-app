@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DEFAULT_INSTRUMENT_ID, INSTRUMENTS } from './audio/instruments'
 import { useInstrument } from './audio/useInstrument'
+import { setMasterVolume } from './audio/master'
 import { Piano } from './piano/Piano'
 import {
   MAX_SHIFT,
@@ -13,8 +14,9 @@ import './App.css'
 
 function App() {
   const [instrumentId, setInstrumentId] = useState(DEFAULT_INSTRUMENT_ID)
-  const [sustain, setSustain] = useState(false)
+  const [sustain, setSustain] = useState(true)
   const [shift, setShift] = useState(0)
+  const [volume, setVolume] = useState(80)
   const config = useMemo(
     () => INSTRUMENTS.find((i) => i.id === instrumentId) ?? INSTRUMENTS[0],
     [instrumentId],
@@ -25,6 +27,12 @@ function App() {
   // preference but neither apply nor allow it for those.
   const supportsSustain = config.supportsSustain !== false
   const effectiveSustain = sustain && supportsSustain
+
+  // Master output volume (affects every instrument). Caps at unity (0 dB) so it
+  // never boosts above an instrument's own level.
+  useEffect(() => {
+    setMasterVolume(volume)
+  }, [volume])
 
   const onShift = useCallback((delta: number) => {
     setShift((s) => clampShift(s + delta))
@@ -96,6 +104,33 @@ function App() {
           <span className="dot" aria-hidden="true" />
           Sustain
         </button>
+
+        <span className="divider" aria-hidden="true" />
+
+        <div className="control-group volume-group">
+          <svg className="vol-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z" />
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              d="M16.5 8.5a5 5 0 0 1 0 7"
+            />
+          </svg>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={volume}
+            aria-label="Volume"
+            className="volume-slider"
+            style={{
+              background: `linear-gradient(to right, var(--accent) ${volume}%, rgba(255,255,255,0.12) ${volume}%)`,
+            }}
+            onChange={(e) => setVolume(Number(e.target.value))}
+          />
+        </div>
 
         <span className={`status${loaded ? ' is-ready' : ''}`}>
           {loaded ? 'Ready' : 'Loading…'}

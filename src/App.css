@@ -184,6 +184,46 @@
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
 }
 
+/* Master volume */
+.volume-group {
+  gap: 8px;
+}
+
+.vol-icon {
+  flex: none;
+  color: var(--text-dim);
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 96px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  box-shadow: 0 0 8px -1px var(--accent-line);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px -1px var(--accent-line);
+}
+
 .status {
   display: inline-flex;
   align-items: center;
