@@ -1,8 +1,9 @@
 .piano {
   display: flex;
   width: 100%;
-  max-width: 1320px;
-  margin: 0 auto;
+  max-width: 1400px;
+  margin-inline: auto;
+  box-sizing: border-box;
   height: 300px;
   padding: 16px;
   border-radius: 14px;
@@ -10,6 +11,16 @@
   box-shadow: var(--shadow);
   user-select: none;
   touch-action: none;
+}
+
+/* One octave group. flex-grow (set inline to the white-key count) keeps key
+   widths uniform across all groups so they read as one continuous keyboard. */
+.octave {
+  position: relative;
+  display: flex;
+  flex-shrink: 1;
+  flex-basis: 0;
+  min-width: 0;
 }
 
 /* Each slot owns one white key and (optionally) the black key after it. */
@@ -72,9 +83,9 @@
   color: #fff;
 }
 
-/* The final black key (A#5) has no white key to its right to straddle, so
-   keep it tucked inside the keyboard instead of overflowing the container. */
-.key-slot:last-child .key-black {
+/* A black key on the last slot of a group (only A#5) has no white key to its
+   right to straddle, so keep it tucked inside instead of overflowing. */
+.octave:last-child .key-slot:last-child .key-black {
   transform: translateX(0);
 }
 .key-labels {
@@ -102,8 +113,17 @@
 }
 
 @media (max-width: 720px) {
+  /* Stack the three octave groups into separate rows. */
   .piano {
-    height: 200px;
+    flex-direction: column;
+    height: auto;
+    gap: 12px;
+    padding: 12px;
+  }
+  .octave {
+    flex-basis: auto;
+    width: 100%;
+    height: 150px;
   }
   .key-trigger {
     font-size: 11px;

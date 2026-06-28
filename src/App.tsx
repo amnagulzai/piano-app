@@ -15,14 +15,6 @@ function App() {
 
   return (
     <main className="app">
-      <header className="app-header">
-        <h1>Virtual Piano</h1>
-        <p>
-          Play with your mouse or computer keyboard across two octaves (C3–A5)
-          — the top two rows are the lower octave, the bottom two the upper.
-        </p>
-      </header>
-
       <div className="controls">
         <label htmlFor="instrument">Instrument</label>
         <select

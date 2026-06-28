@@ -1,32 +1,19 @@
 .app {
   width: 100%;
-  max-width: 1360px;
   box-sizing: border-box;
-  margin: 0 auto;
-  padding: 48px 20px 64px;
+  padding: 24px 16px 40px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.app-header {
-  text-align: center;
-}
-
-.app-header h1 {
-  margin: 0 0 8px;
-}
-
-.app-header p {
-  color: var(--text);
-  max-width: 540px;
-  margin: 0 auto;
+  gap: 20px;
 }
 
 .controls {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { KEYBOARD_TO_NOTE, PIANO_KEYS, type PianoKeyDef } from './keyMap'
+import { KEYBOARD_TO_NOTE, PIANO_OCTAVES, type PianoKeyDef } from './keyMap'
 import { PianoKey } from './PianoKey'
 import './piano.css'
 
@@ -10,21 +10,23 @@ type PianoProps = {
   sustain: boolean
 }
 
-/** Group each white key with the black key that immediately follows it (if any). */
-function useKeyLayout() {
-  return useMemo(() => {
-    const slots: { white: PianoKeyDef; black: PianoKeyDef | null }[] = []
-    PIANO_KEYS.forEach((key, i) => {
-      if (key.type !== 'white') return
-      const next = PIANO_KEYS[i + 1]
-      slots.push({ white: key, black: next?.type === 'black' ? next : null })
-    })
-    return slots
-  }, [])
+type Slot = { white: PianoKeyDef; black: PianoKeyDef | null }
+
+/** Pair each white key with the black key that immediately follows it (if any). */
+function toSlots(keys: PianoKeyDef[]): Slot[] {
+  const slots: Slot[] = []
+  keys.forEach((key, i) => {
+    if (key.type !== 'white') return
+    const next = keys[i + 1]
+    slots.push({ white: key, black: next?.type === 'black' ? next : null })
+  })
+  return slots
 }
 
 export function Piano({ play, stop, sustain }: PianoProps) {
-  const slots = useKeyLayout()
+  // One slot list per octave group; widths are kept uniform across the whole
+  // keyboard by giving each group a flex-grow equal to its white-key count.
+  const octaves = useMemo(() => PIANO_OCTAVES.map(toSlots), [])
   // Notes whose key is physically held (drives the pressed highlight + sound).
   const [activeNotes, setActiveNotes] = useState<Set<string>>(new Set())
   // Notes still ringing only because the sustain pedal is on (key released).
@@ -97,22 +99,26 @@ export function Piano({ play, stop, sustain }: PianoProps) {
 
   return (
     <div className="piano" role="group" aria-label="Virtual piano keyboard">
-      {slots.map(({ white, black }) => (
-        <div className="key-slot" key={white.note}>
-          <PianoKey
-            def={white}
-            active={activeNotes.has(white.note)}
-            onPress={press}
-            onRelease={release}
-          />
-          {black && (
-            <PianoKey
-              def={black}
-              active={activeNotes.has(black.note)}
-              onPress={press}
-              onRelease={release}
-            />
-          )}
+      {octaves.map((slots, i) => (
+        <div className="octave" key={i} style={{ flexGrow: slots.length }}>
+          {slots.map(({ white, black }) => (
+            <div className="key-slot" key={white.note}>
+              <PianoKey
+                def={white}
+                active={activeNotes.has(white.note)}
+                onPress={press}
+                onRelease={release}
+              />
+              {black && (
+                <PianoKey
+                  def={black}
+                  active={activeNotes.has(black.note)}
+                  onPress={press}
+                  onRelease={release}
+                />
+              )}
+            </div>
+          ))}
         </div>
       ))}
     </div>
