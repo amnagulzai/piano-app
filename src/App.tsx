@@ -21,6 +21,11 @@ function App() {
   )
   const { loaded, play, stop } = useInstrument(config)
 
+  // Some instruments (e.g. harmonium) have no sustain; keep the user's toggle
+  // preference but neither apply nor allow it for those.
+  const supportsSustain = config.supportsSustain !== false
+  const effectiveSustain = sustain && supportsSustain
+
   const onShift = useCallback((delta: number) => {
     setShift((s) => clampShift(s + delta))
   }, [])
@@ -82,8 +87,10 @@ function App() {
 
         <button
           type="button"
-          className={`sustain-toggle${sustain ? ' is-on' : ''}`}
-          aria-pressed={sustain}
+          className={`sustain-toggle${effectiveSustain ? ' is-on' : ''}`}
+          aria-pressed={effectiveSustain}
+          disabled={!supportsSustain}
+          title={supportsSustain ? undefined : `No sustain for ${config.name}`}
           onClick={() => setSustain((s) => !s)}
         >
           <span className="dot" aria-hidden="true" />
@@ -98,7 +105,7 @@ function App() {
       <Piano
         play={play}
         stop={stop}
-        sustain={sustain}
+        sustain={effectiveSustain}
         keys={keys}
         onShift={onShift}
       />

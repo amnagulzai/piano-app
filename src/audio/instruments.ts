@@ -16,6 +16,12 @@ export type InstrumentConfig = {
   samples: Record<string, string>
   /** Release time in seconds applied when a note is let go. */
   release: number
+  /**
+   * Whether a sustain pedal makes sense for this instrument. Reed instruments
+   * (e.g. harmonium) stop sounding the moment a key is released, so they have no
+   * sustain. Defaults to true when omitted.
+   */
+  supportsSustain?: boolean
 }
 
 export const INSTRUMENTS: InstrumentConfig[] = [
@@ -40,6 +46,30 @@ export const INSTRUMENTS: InstrumentConfig[] = [
       C6: 'C6.mp3',
     },
     release: 1,
+  },
+  {
+    id: 'harmonium',
+    name: 'Harmonium',
+    baseUrl: '/samples/harmonium/',
+    // Indian harmonium anchors (tonejs-instruments, CC-BY 3.0) covering C2-D5.
+    samples: {
+      C2: 'C2.mp3',
+      'D#2': 'Ds2.mp3',
+      'F#2': 'Fs2.mp3',
+      A2: 'A2.mp3',
+      C3: 'C3.mp3',
+      'D#3': 'Ds3.mp3',
+      'F#3': 'Fs3.mp3',
+      A3: 'A3.mp3',
+      C4: 'C4.mp3',
+      'D#4': 'Ds4.mp3',
+      G4: 'G4.mp3',
+      A4: 'A4.mp3',
+      C5: 'C5.mp3',
+      D5: 'D5.mp3',
+    },
+    release: 0.4,
+    supportsSustain: false,
   },
 ]
 

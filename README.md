@@ -77,3 +77,13 @@ public/
 2. Add an entry to the `INSTRUMENTS` array in `src/audio/instruments.ts`.
 
 It will then appear in the instrument selector automatically.
+
+## Credits
+
+Bundled instrument samples (both [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)):
+
+- **Grand Piano** — [Salamander Grand Piano](https://archive.org/details/SalamanderGrandPianoV3)
+  by Alexander Holm.
+- **Harmonium** — Indian harmonium from
+  [tonejs-instruments](https://github.com/nbrosowsky/tonejs-instruments)
+  (CC0 recording from Yale's Euterpea Studio, Freesound #330410).

@@ -154,9 +154,14 @@
   transition: all 0.18s ease;
 }
 
-.sustain-toggle:hover {
+.sustain-toggle:hover:not(:disabled) {
   color: var(--text-strong);
   border-color: var(--accent-line);
+}
+
+.sustain-toggle:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .sustain-toggle .dot {
