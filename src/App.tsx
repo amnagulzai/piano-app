@@ -16,7 +16,7 @@ function App() {
   const [instrumentId, setInstrumentId] = useState(DEFAULT_INSTRUMENT_ID)
   const [sustain, setSustain] = useState(true)
   const [shift, setShift] = useState(0)
-  const [volume, setVolume] = useState(80)
+  const [volume, setVolume] = useState(100)
   const config = useMemo(
     () => INSTRUMENTS.find((i) => i.id === instrumentId) ?? INSTRUMENTS[0],
     [instrumentId],
