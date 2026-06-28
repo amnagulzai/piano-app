@@ -17,6 +17,11 @@ export type InstrumentConfig = {
   /** Release time in seconds applied when a note is let go. */
   release: number
   /**
+   * Output gain trim in decibels (default 0). Use a negative value for loud,
+   * sustained instruments so stacked notes don't sum past 0 dBFS and distort.
+   */
+  volume?: number
+  /**
    * Whether a sustain pedal makes sense for this instrument. Reed instruments
    * (e.g. harmonium) stop sounding the moment a key is released, so they have no
    * sustain. Defaults to true when omitted.
@@ -70,6 +75,8 @@ export const INSTRUMENTS: InstrumentConfig[] = [
     },
     release: 0.4,
     supportsSustain: false,
+    // Reed samples are hot and sustained; trim so chords don't clip.
+    volume: -9,
   },
 ]
 

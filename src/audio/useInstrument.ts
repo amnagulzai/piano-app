@@ -29,6 +29,7 @@ export function useInstrument(config: InstrumentConfig): UseInstrument {
       urls: config.samples,
       baseUrl: config.baseUrl,
       release: config.release,
+      volume: config.volume ?? 0,
       onload: () => setLoaded(true),
     }).toDestination()
     samplerRef.current = sampler
