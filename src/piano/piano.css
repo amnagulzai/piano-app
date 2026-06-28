@@ -27,6 +27,9 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  /* Mobile: no scroll/zoom delay on tap, and no grey tap flash. */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* White keys fill the slot side by side. */

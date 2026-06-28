@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import * as Tone from 'tone'
 import type { InstrumentConfig } from './instruments'
+import { installAudioUnlock, unlockAudio } from './audioUnlock'
 
 type UseInstrument = {
   /** True once all samples for the current instrument are decoded and ready. */
@@ -19,6 +20,9 @@ export function useInstrument(config: InstrumentConfig): UseInstrument {
   const samplerRef = useRef<Tone.Sampler | null>(null)
   const [loaded, setLoaded] = useState(false)
 
+  // Prime audio on the first interaction anywhere (key, control, or keypress).
+  useEffect(() => installAudioUnlock(), [])
+
   useEffect(() => {
     setLoaded(false)
     const sampler = new Tone.Sampler({
@@ -36,10 +40,10 @@ export function useInstrument(config: InstrumentConfig): UseInstrument {
   }, [config])
 
   const play = useCallback(async (note: string) => {
-    // Browsers require a user gesture before audio can start.
-    if (Tone.getContext().state !== 'running') {
-      await Tone.start()
-    }
+    // Browsers require a user gesture before audio can start; on mobile this
+    // also routes audio past the iOS mute switch. Resolves immediately once
+    // audio is already running.
+    await unlockAudio()
     samplerRef.current?.triggerAttack(note)
   }, [])
 
