@@ -16,29 +16,37 @@ function App() {
   return (
     <main className="app">
       <div className="controls">
-        <label htmlFor="instrument">Instrument</label>
-        <select
-          id="instrument"
-          value={instrumentId}
-          onChange={(e) => setInstrumentId(e.target.value)}
-        >
-          {INSTRUMENTS.map((i) => (
-            <option key={i.id} value={i.id}>
-              {i.name}
-            </option>
-          ))}
-        </select>
+        <div className="control-group">
+          <label htmlFor="instrument">Instrument</label>
+          <div className="select-wrap">
+            <select
+              id="instrument"
+              value={instrumentId}
+              onChange={(e) => setInstrumentId(e.target.value)}
+            >
+              {INSTRUMENTS.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <span className="divider" aria-hidden="true" />
+
         <button
           type="button"
           className={`sustain-toggle${sustain ? ' is-on' : ''}`}
           aria-pressed={sustain}
           onClick={() => setSustain((s) => !s)}
         >
-          Sustain: {sustain ? 'On' : 'Off'}
+          <span className="dot" aria-hidden="true" />
+          Sustain
         </button>
 
         <span className={`status${loaded ? ' is-ready' : ''}`}>
-          {loaded ? 'Ready' : 'Loading samples…'}
+          {loaded ? 'Ready' : 'Loading…'}
         </span>
       </div>
 

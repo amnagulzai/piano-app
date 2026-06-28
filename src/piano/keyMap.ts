@@ -60,11 +60,15 @@ function buildKeys(start: string, end: string): PianoKeyDef[] {
   return keys
 }
 
-/** The full on-screen keyboard: a continuous piano from C3 to A#5. */
-export const PIANO_KEYS: PianoKeyDef[] = buildKeys('C3', 'A#5')
+/**
+ * The full on-screen keyboard: a continuous piano from C3 to B5. It ends on the
+ * white B5 (mouse/touch playable, no computer-key shortcut) so the last black
+ * key, A#5, straddles the A5/B5 gap consistently with every other black key.
+ */
+export const PIANO_KEYS: PianoKeyDef[] = buildKeys('C3', 'B5')
 
 /**
- * The keyboard split into octave groups (C3-B3, C4-B4, C5-A#5). The cuts fall
+ * The keyboard split into octave groups (C3-B3, C4-B4, C5-B5). The cuts fall
  * on C boundaries, where there is no black key between B and C, so the groups
  * sit flush as one continuous keyboard on wide screens and stack cleanly into
  * separate rows on narrow screens.
@@ -72,5 +76,5 @@ export const PIANO_KEYS: PianoKeyDef[] = buildKeys('C3', 'A#5')
 export const PIANO_OCTAVES: PianoKeyDef[][] = [
   buildKeys('C3', 'B3'),
   buildKeys('C4', 'B4'),
-  buildKeys('C5', 'A#5'),
+  buildKeys('C5', 'B5'),
 ]

@@ -1,16 +1,35 @@
 .piano {
+  position: relative;
   display: flex;
   width: 100%;
   max-width: 1400px;
   margin-inline: auto;
   box-sizing: border-box;
-  height: 300px;
-  padding: 16px;
-  border-radius: 14px;
-  background: linear-gradient(#2a2a33, #15151b);
-  box-shadow: var(--shadow);
+  height: 320px;
+  padding: 24px 18px 18px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #2b2838 0%, #1b1825 60%, #131019 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 50px 90px -40px rgba(0, 0, 0, 0.85),
+    0 12px 30px -12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   user-select: none;
   touch-action: none;
+}
+
+/* Felt strip above the keys. */
+.piano::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 18px;
+  right: 18px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 16px -2px var(--accent-line);
+  opacity: 0.85;
 }
 
 /* One octave group. flex-grow (set inline to the white-key count) keeps key
@@ -38,6 +57,11 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  transition:
+    transform 0.04s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease,
+    background 0.12s ease;
   /* Mobile: no scroll/zoom delay on tap, and no grey tap flash. */
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
@@ -47,69 +71,105 @@
 .key-white {
   width: 100%;
   height: 100%;
-  background: linear-gradient(#fff, #f3f3f6);
-  border: 1px solid #bcbcc6;
-  border-radius: 0 0 6px 6px;
-  box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.08);
-  color: #6b6375;
+  background: linear-gradient(180deg, #fcfcff 0%, #efedf4 72%, #e0dde8 100%);
+  border: 1px solid #c0bcca;
+  border-top: none;
+  border-radius: 0 0 7px 7px;
+  box-shadow:
+    inset 0 -7px 9px -5px rgba(40, 30, 60, 0.25),
+    inset -1px 0 0 rgba(0, 0, 0, 0.05);
+  color: #564f66;
+}
+
+.key-white:hover {
+  background: linear-gradient(180deg, #fff 0%, #f3f1f8 72%, #e6e3ee 100%);
 }
 
 .key-white.is-active {
-  background: linear-gradient(var(--accent-bg), #e7c8ff);
+  background: linear-gradient(180deg, #f3e6ff 0%, #e3c8ff 100%);
   border-color: var(--accent);
+  transform: translateY(2px);
   box-shadow:
-    inset 0 -3px 8px var(--accent-border),
-    0 0 10px var(--accent-bg);
+    inset 0 -5px 10px -4px var(--accent-line),
+    0 0 18px -2px var(--accent-line);
 }
+
 /* Black keys straddle the boundary between two white keys. */
 .key-black {
+  --tx: 50%;
   position: absolute;
   top: 0;
   right: 0;
-  transform: translateX(50%);
-  width: 62%;
-  height: 62%;
+  transform: translateX(var(--tx));
+  width: 60%;
+  height: 63%;
   z-index: 2;
-  background: linear-gradient(#3a3a44, #0c0c10);
-  border: 1px solid #000;
-  border-radius: 0 0 5px 5px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, #4c4956 0%, #232029 52%, #0c0b11 100%);
+  border-radius: 0 0 6px 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -10px 12px -8px rgba(0, 0, 0, 0.8),
+    0 6px 9px -2px rgba(0, 0, 0, 0.65);
   color: #d8d2e0;
 }
 
+.key-black:hover {
+  filter: brightness(1.25);
+}
+
 .key-black.is-active {
-  background: linear-gradient(#9b46d6, var(--accent));
-  box-shadow: 0 0 10px var(--accent);
+  background: linear-gradient(180deg, #c39bff 0%, var(--accent) 60%, #7d3ce0 100%);
+  transform: translateX(var(--tx)) translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 18px -1px var(--accent-line);
   color: #fff;
 }
 
-/* A black key on the last slot of a group (only A#5) has no white key to its
-   right to straddle, so keep it tucked inside instead of overflowing. */
-.octave:last-child .key-slot:last-child .key-black {
-  transform: translateX(0);
-}
 .key-labels {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding-bottom: 10px;
+  gap: 3px;
+  padding-bottom: 12px;
   pointer-events: none;
 }
 
 .key-black .key-labels {
-  padding-bottom: 7px;
+  padding-bottom: 9px;
 }
 
 .key-trigger {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(60, 40, 90, 0.08);
+  color: #5a5270;
+}
+
+.key-black .key-trigger {
+  background: rgba(255, 255, 255, 0.14);
+  color: #f1ecf9;
 }
 
 .key-note {
-  font-size: 11px;
-  opacity: 0.65;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  opacity: 0.55;
+}
+
+.is-active .key-trigger {
+  background: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.is-active .key-note {
+  opacity: 0.85;
+  color: #fff;
 }
 
 @media (max-width: 720px) {
@@ -117,16 +177,17 @@
   .piano {
     flex-direction: column;
     height: auto;
-    gap: 12px;
-    padding: 12px;
+    gap: 14px;
+    padding: 22px 12px 14px;
   }
   .octave {
     flex-basis: auto;
     width: 100%;
-    height: 150px;
+    height: 148px;
   }
   .key-trigger {
     font-size: 11px;
+    padding: 2px 5px;
   }
   .key-note {
     font-size: 9px;

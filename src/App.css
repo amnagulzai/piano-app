@@ -1,64 +1,171 @@
 .app {
+  flex: 1;
   width: 100%;
   box-sizing: border-box;
-  padding: 24px 16px 40px;
+  padding: clamp(20px, 5vh, 56px) 16px 48px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 4vh, 40px);
 }
 
+/* Centered glass toolbar */
 .controls {
-  width: 100%;
-  max-width: 1400px;
-  margin-inline: auto;
-  box-sizing: border-box;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  padding: 8px 8px 8px 18px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow:
+    0 10px 30px -12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.control-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .controls label {
-  color: var(--text-h);
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Custom-styled select with chevron */
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--text);
+  border-bottom: 2px solid var(--text);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
 }
 
 .controls select {
+  appearance: none;
+  -webkit-appearance: none;
   font: inherit;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-h);
+  font-weight: 500;
+  color: var(--text-strong);
+  padding: 9px 34px 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.controls select:hover {
+  border-color: var(--accent-line);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.controls select option {
+  color: #111;
+}
+
+.divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 4px 0;
+  background: var(--panel-border);
 }
 
 .sustain-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font: inherit;
-  font-size: 15px;
-  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  padding: 9px 16px;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-h);
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.sustain-toggle:hover {
+  color: var(--text-strong);
+  border-color: var(--accent-line);
+}
+
+.sustain-toggle .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: all 0.18s ease;
 }
 
 .sustain-toggle.is-on {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 18px -2px var(--accent-line);
+}
+
+.sustain-toggle.is-on .dot {
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
 }
 
 .status {
-  font-size: 14px;
-  color: var(--text);
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--code-bg);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  padding-right: 8px;
+}
+
+.status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
 .status.is-ready {
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: #5fd0a8;
+}
+
+.status.is-ready::before {
+  background: #5fd0a8;
+  box-shadow: 0 0 8px rgba(95, 208, 168, 0.8);
+  animation: none;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
 }
