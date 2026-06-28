@@ -1,17 +1,33 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { DEFAULT_INSTRUMENT_ID, INSTRUMENTS } from './audio/instruments'
 import { useInstrument } from './audio/useInstrument'
 import { Piano } from './piano/Piano'
+import {
+  MAX_SHIFT,
+  MIN_SHIFT,
+  SHIFT_STEP,
+  buildWindow,
+  clampShift,
+} from './piano/keyMap'
 import './App.css'
 
 function App() {
   const [instrumentId, setInstrumentId] = useState(DEFAULT_INSTRUMENT_ID)
   const [sustain, setSustain] = useState(false)
+  const [shift, setShift] = useState(0)
   const config = useMemo(
     () => INSTRUMENTS.find((i) => i.id === instrumentId) ?? INSTRUMENTS[0],
     [instrumentId],
   )
   const { loaded, play, stop } = useInstrument(config)
+
+  const onShift = useCallback((delta: number) => {
+    setShift((s) => clampShift(s + delta))
+  }, [])
+
+  const keys = useMemo(() => buildWindow(shift), [shift])
+  const rangeStart = keys[0].note
+  const rangeEnd = keys[keys.length - 1].note
 
   return (
     <main className="app">
@@ -35,6 +51,35 @@ function App() {
 
         <span className="divider" aria-hidden="true" />
 
+        <div className="control-group">
+          <label>Range</label>
+          <div className="shifter">
+            <button
+              type="button"
+              className="shift-btn"
+              aria-label="Shift down"
+              disabled={shift <= MIN_SHIFT}
+              onClick={() => onShift(-SHIFT_STEP)}
+            >
+              ‹
+            </button>
+            <span className="range">
+              {rangeStart} – {rangeEnd}
+            </span>
+            <button
+              type="button"
+              className="shift-btn"
+              aria-label="Shift up"
+              disabled={shift >= MAX_SHIFT}
+              onClick={() => onShift(SHIFT_STEP)}
+            >
+              ›
+            </button>
+          </div>
+        </div>
+
+        <span className="divider" aria-hidden="true" />
+
         <button
           type="button"
           className={`sustain-toggle${sustain ? ' is-on' : ''}`}
@@ -50,7 +95,13 @@ function App() {
         </span>
       </div>
 
-      <Piano play={play} stop={stop} sustain={sustain} />
+      <Piano
+        play={play}
+        stop={stop}
+        sustain={sustain}
+        keys={keys}
+        onShift={onShift}
+      />
     </main>
   )
 }

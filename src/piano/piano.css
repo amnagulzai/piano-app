@@ -6,8 +6,11 @@
   margin-inline: auto;
   box-sizing: border-box;
   height: 320px;
-  padding: 24px 18px 18px;
+  padding: 24px 20px 18px;
   border-radius: 20px;
+  /* Black keys at the window edges straddle past the outer white keys; clip
+     them at the cabinet so they read as continuing off-screen. */
+  overflow: hidden;
   background: linear-gradient(180deg, #2b2838 0%, #1b1825 60%, #131019 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
@@ -111,6 +114,13 @@
     inset 0 -10px 12px -8px rgba(0, 0, 0, 0.8),
     0 6px 9px -2px rgba(0, 0, 0, 0.65);
   color: #d8d2e0;
+}
+
+/* A leading black key (window starts on a black note) straddles the left edge. */
+.key-black--left {
+  --tx: -50%;
+  left: 0;
+  right: auto;
 }
 
 .key-black:hover {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { KEYBOARD_TO_NOTE, PIANO_OCTAVES, type PianoKeyDef } from './keyMap'
+import { SHIFT_STEP, groupKeys, type PianoKeyDef } from './keyMap'
 import { PianoKey } from './PianoKey'
 import './piano.css'
 
@@ -8,35 +8,51 @@ type PianoProps = {
   stop: (note: string) => void
   /** When true, releasing a key keeps the note ringing (sustain pedal). */
   sustain: boolean
+  /** The ordered keys of the current window (already shifted). */
+  keys: PianoKeyDef[]
+  /** Slide the window by a number of diatonic steps. */
+  onShift: (delta: number) => void
 }
 
-type Slot = { white: PianoKeyDef; black: PianoKeyDef | null }
+type Slot = {
+  white: PianoKeyDef
+  blackRight: PianoKeyDef | null
+  /** A leading black key (window starts on a black note) straddling the left. */
+  blackLeft: PianoKeyDef | null
+}
 
-/** Pair each white key with the black key that immediately follows it (if any). */
-function toSlots(keys: PianoKeyDef[]): Slot[] {
+/** Turn an ordered group of keys into white-anchored slots with their blacks. */
+function toSlots(group: PianoKeyDef[]): Slot[] {
   const slots: Slot[] = []
-  keys.forEach((key, i) => {
-    if (key.type !== 'white') return
-    const next = keys[i + 1]
-    slots.push({ white: key, black: next?.type === 'black' ? next : null })
-  })
+  let pendingLeft: PianoKeyDef | null = null
+  for (const key of group) {
+    if (key.type === 'black') {
+      if (slots.length > 0) slots[slots.length - 1].blackRight = key
+      else pendingLeft = key
+    } else {
+      slots.push({ white: key, blackRight: null, blackLeft: pendingLeft })
+      pendingLeft = null
+    }
+  }
   return slots
 }
 
-export function Piano({ play, stop, sustain }: PianoProps) {
-  // One slot list per octave group; widths are kept uniform across the whole
-  // keyboard by giving each group a flex-grow equal to its white-key count.
-  const octaves = useMemo(() => PIANO_OCTAVES.map(toSlots), [])
+export function Piano({ play, stop, sustain, keys, onShift }: PianoProps) {
+  const octaves = useMemo(() => groupKeys(keys).map(toSlots), [keys])
+  const keyToNote = useMemo(() => {
+    const map: Record<string, string> = {}
+    for (const k of keys) if (k.key) map[k.key] = k.note
+    return map
+  }, [keys])
+
   // Notes whose key is physically held (drives the pressed highlight + sound).
   const [activeNotes, setActiveNotes] = useState<Set<string>>(new Set())
   // Notes still ringing only because the sustain pedal is on (key released).
-  // Tracked purely to release them when the pedal lifts; not shown visually.
   const [, setSustainedNotes] = useState<Set<string>>(new Set())
 
   const press = useCallback(
     (note: string) => {
       setActiveNotes((prev) => (prev.has(note) ? prev : new Set(prev).add(note)))
-      // A re-pressed note is no longer merely sustained.
       setSustainedNotes((prev) => {
         if (!prev.has(note)) return prev
         const next = new Set(prev)
@@ -75,19 +91,40 @@ export function Piano({ play, stop, sustain }: PianoProps) {
     })
   }, [sustain, stop])
 
-  // Bind the computer keyboard to the piano.
+  // Sliding the window remaps keys to new notes; release everything sounding so
+  // a held/sustained note can't get stuck.
+  useEffect(() => {
+    const releaseAll = (prev: Set<string>) => {
+      if (prev.size === 0) return prev
+      prev.forEach((note) => stop(note))
+      return new Set<string>()
+    }
+    setActiveNotes(releaseAll)
+    setSustainedNotes(releaseAll)
+  }, [keyToNote, stop])
+
+  // Bind the computer keyboard: letters play notes, arrows slide the window.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return
-      const note = KEYBOARD_TO_NOTE[e.key.toLowerCase()]
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        onShift(-SHIFT_STEP)
+        return
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        onShift(SHIFT_STEP)
+        return
+      }
+      const note = keyToNote[e.key.toLowerCase()]
       if (!note) return
       e.preventDefault()
       press(note)
     }
     const onKeyUp = (e: KeyboardEvent) => {
-      const note = KEYBOARD_TO_NOTE[e.key.toLowerCase()]
-      if (!note) return
-      release(note)
+      const note = keyToNote[e.key.toLowerCase()]
+      if (note) release(note)
     }
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
@@ -95,24 +132,33 @@ export function Piano({ play, stop, sustain }: PianoProps) {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
     }
-  }, [press, release])
+  }, [press, release, onShift, keyToNote])
 
   return (
     <div className="piano" role="group" aria-label="Virtual piano keyboard">
       {octaves.map((slots, i) => (
         <div className="octave" key={i} style={{ flexGrow: slots.length }}>
-          {slots.map(({ white, black }) => (
+          {slots.map(({ white, blackRight, blackLeft }) => (
             <div className="key-slot" key={white.note}>
+              {blackLeft && (
+                <PianoKey
+                  def={blackLeft}
+                  edge="left"
+                  active={activeNotes.has(blackLeft.note)}
+                  onPress={press}
+                  onRelease={release}
+                />
+              )}
               <PianoKey
                 def={white}
                 active={activeNotes.has(white.note)}
                 onPress={press}
                 onRelease={release}
               />
-              {black && (
+              {blackRight && (
                 <PianoKey
-                  def={black}
-                  active={activeNotes.has(black.note)}
+                  def={blackRight}
+                  active={activeNotes.has(blackRight.note)}
                   onPress={press}
                   onRelease={release}
                 />

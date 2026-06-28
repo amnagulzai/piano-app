@@ -20,15 +20,27 @@ piano sound that works **offline**.
 
 ## Keyboard mapping
 
-The two letter rows are the white keys; the rows physically above them are the
-black keys, mirroring a real piano.
+The two letter rows are the white keys; the rows above them are the black keys,
+mirroring a real piano. White letter keys always land on natural notes (so they
+stay white) and black keys are the sharps between them.
 
-| Computer keys | Notes |
+| Computer keys | Role |
 | --- | --- |
-| Top letter row `Q W E R T Y U I O P` | White keys C3–E4 (lower octave) |
-| Number row `2 3 5 6 7 9 0` | Black keys C#3–D#4 |
-| Bottom letter row `Z X C V B N M , . /` | White keys F4–A5 (upper octave) |
-| Home row `S D F H J L ;` and `'` | Black keys F#4–A#5 |
+| Top letter row `Q W E R T Y U I O P` | White keys |
+| Bottom letter row `Z X C V B N M , . /` | White keys |
+| Number row `1`–`0` | Black keys (above the top row) |
+| Home row `A S D F G H J K L ;` and `'` | Black keys (above the bottom row) |
+
+At the default position `Q` is C3. A black key plays nothing where no sharp
+exists (there is none between B–C or E–F).
+
+### Sliding the range
+
+Use **← / →** (or the **‹ ›** range buttons in the toolbar) to slide the whole
+keyboard a diatonic step at a time. Each press shifts every key to the next
+lower/higher natural note — e.g. `Q`: C3 → B2 → A2, with the black keys becoming
+the sharps below the new white notes. The white/black layout never changes; only
+the notes do. The range is clamped to a standard 88-key piano (A0–C8).
 
 Audio unlocks on your first interaction (a browser requirement), so the first
 click or key press is what starts the sound.

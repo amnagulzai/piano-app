@@ -3,17 +3,21 @@ import type { PianoKeyDef } from './keyMap'
 type PianoKeyProps = {
   def: PianoKeyDef
   active: boolean
+  /** A black key with no white key to its left straddles the left edge instead. */
+  edge?: 'left'
   onPress: (note: string) => void
   onRelease: (note: string) => void
 }
 
-export function PianoKey({ def, active, onPress, onRelease }: PianoKeyProps) {
+export function PianoKey({ def, active, edge, onPress, onRelease }: PianoKeyProps) {
   const { note, type, keys } = def
 
   return (
     <button
       type="button"
-      className={`key key-${type}${active ? ' is-active' : ''}`}
+      className={`key key-${type}${active ? ' is-active' : ''}${
+        edge === 'left' ? ' key-black--left' : ''
+      }`}
       // Pointer events give us press/hold/release plus drag-off to stop.
       onPointerDown={(e) => {
         e.preventDefault()

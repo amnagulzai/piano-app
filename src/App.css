@@ -90,6 +90,54 @@
   background: var(--panel-border);
 }
 
+/* Range shifter */
+.shifter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.shift-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-strong);
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.shift-btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.shift-btn:disabled {
+  color: var(--text-dim);
+  opacity: 0.4;
+  cursor: default;
+}
+
+.range {
+  min-width: 84px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-strong);
+  letter-spacing: 0.02em;
+}
+
 .sustain-toggle {
   display: inline-flex;
   align-items: center;
