@@ -1,0 +1,111 @@
+.piano {
+  display: flex;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  height: 300px;
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(#2a2a33, #15151b);
+  box-shadow: var(--shadow);
+  user-select: none;
+  touch-action: none;
+}
+
+/* Each slot owns one white key and (optionally) the black key after it. */
+.key-slot {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.key {
+  font-family: var(--sans);
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* White keys fill the slot side by side. */
+.key-white {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#fff, #f3f3f6);
+  border: 1px solid #bcbcc6;
+  border-radius: 0 0 6px 6px;
+  box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.08);
+  color: #6b6375;
+}
+
+.key-white.is-active {
+  background: linear-gradient(var(--accent-bg), #e7c8ff);
+  border-color: var(--accent);
+  box-shadow:
+    inset 0 -3px 8px var(--accent-border),
+    0 0 10px var(--accent-bg);
+}
+/* Black keys straddle the boundary between two white keys. */
+.key-black {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(50%);
+  width: 62%;
+  height: 62%;
+  z-index: 2;
+  background: linear-gradient(#3a3a44, #0c0c10);
+  border: 1px solid #000;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
+  color: #d8d2e0;
+}
+
+.key-black.is-active {
+  background: linear-gradient(#9b46d6, var(--accent));
+  box-shadow: 0 0 10px var(--accent);
+  color: #fff;
+}
+
+/* The final black key (A#5) has no white key to its right to straddle, so
+   keep it tucked inside the keyboard instead of overflowing the container. */
+.key-slot:last-child .key-black {
+  transform: translateX(0);
+}
+.key-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 10px;
+  pointer-events: none;
+}
+
+.key-black .key-labels {
+  padding-bottom: 7px;
+}
+
+.key-trigger {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.key-note {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+@media (max-width: 720px) {
+  .piano {
+    height: 200px;
+  }
+  .key-trigger {
+    font-size: 11px;
+  }
+  .key-note {
+    font-size: 9px;
+  }
+}
